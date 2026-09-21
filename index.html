@@ -19,7 +19,8 @@
     window.OneSignalDeferred.push(async function(OneSignal) {
       try {
         await OneSignal.init({
-          appId: "f7f7a2a5-6569-479c-b91d-48b29410590f"
+          appId: "f7f7a2a5-6569-479c-b91d-48b29410590f",
+          path: "/abuhuraira/" // Explicitly point to your subfolder path
         });
         window.isOneSignalLoaded = true;
         console.log("OneSignal initialized successfully");
@@ -34,10 +35,9 @@
           await OneSignal.Slidedown.promptPush();
         } catch (err) {
           console.error("Error prompting push:", err);
-          alert("Error opening notification prompt. Make sure you are running from the Home Screen PWA.");
         }
       } else {
-        alert("OneSignal is still loading or blocked. Please check your internet connection or restart the app.");
+        alert("OneSignal is still loading or blocked.");
       }
     }
   </script>
