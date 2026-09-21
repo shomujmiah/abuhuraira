@@ -17,22 +17,27 @@
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "f7f7a2a5-6569-479c-b91d-48b29410590f"
-        // safari_web_id removed completely
-      });
+      try {
+        await OneSignal.init({
+          appId: "f7f7a2a5-6569-479c-b91d-48b29410590f"
+        });
+        window.isOneSignalLoaded = true;
+        console.log("OneSignal initialized successfully");
+      } catch (err) {
+        console.error("OneSignal init error:", err);
+      }
     });
 
-    // Function triggered when you tap the bell button
     async function subscribePush() {
-      if (window.OneSignal) {
+      if (window.isOneSignalLoaded || window.OneSignal) {
         try {
           await OneSignal.Slidedown.promptPush();
         } catch (err) {
           console.error("Error prompting push:", err);
+          alert("Error opening notification prompt. Make sure you are running from the Home Screen PWA.");
         }
       } else {
-        alert("OneSignal is still loading, please try again in a moment.");
+        alert("OneSignal is still loading or blocked. Please check your internet connection or restart the app.");
       }
     }
   </script>
