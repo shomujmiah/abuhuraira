@@ -23,10 +23,11 @@
       });
     });
 
-    async function enablePush() {
-      if (window.OneSignal) {
+    // Bridge function matching what your Google Apps Script iframe expects
+    function triggerPushPrompt() {
+      if (window.OneSignal && window.OneSignal.Slidedown) {
         try {
-          await OneSignal.Slidedown.promptPush();
+          window.OneSignal.Slidedown.promptUser();
         } catch (err) {
           console.error("Prompt error:", err);
         }
@@ -51,7 +52,7 @@
 </head>
 <body>
   <!-- Native button on the outer wrapper that bypasses iframe restrictions -->
-  <button class="floating-bell" onclick="enablePush()">🔔 Enable Alerts</button>
+  <button class="floating-bell" onclick="triggerPushPrompt()">🔔 Enable Alerts</button>
 
   <iframe src="https://script.google.com/macros/s/AKfycbwXb38jVqF3J6sX3oR9nsv_NUVH3K4G_vky8cHWFVgppv0rpTn7KnQBLG9T8wRgfeIx/exec" allow="push"></iframe>
 </body>
