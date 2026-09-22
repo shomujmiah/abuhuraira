@@ -23,20 +23,18 @@
       });
     });
 
-    // Bridge function matching what your Google Apps Script iframe expects
+    // Bridge function safely queued through OneSignalDeferred
     function triggerPushPrompt() {
-      if (window.OneSignal && window.OneSignal.Slidedown) {
+      window.OneSignalDeferred.push(async function(OneSignal) {
         try {
-          window.OneSignal.Slidedown.promptUser();
+          await OneSignal.Slidedown.promptUser();
         } catch (err) {
           console.error("Prompt error:", err);
+          alert("Error opening notification prompt. Please try again.");
         }
-      } else {
-        alert("Notification service is loading, please try again.");
-      }
+      });
     }
   </script>
-
   <style>
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #0f172a; }
     
