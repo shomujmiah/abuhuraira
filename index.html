@@ -26,12 +26,14 @@
     // Bridge function with a built-in retry if the SDK is still loading
     function triggerPushPrompt(retries = 5) {
       if (window.OneSignal && window.OneSignal.Slidedown) {
-        window.OneSignal.Slidedown.promptUser().catch(err => console.error("Prompt error:", err));
+        window.OneSignal.Slidedown.promptUser().catch(err => {
+          console.error("OneSignal Prompt Rejected:", err);
+          alert("Prompt failed: " + (err.message || err));
+        });
       } else if (retries > 0) {
-        // If still loading, wait 300ms and try again automatically
         setTimeout(() => triggerPushPrompt(retries - 1), 300);
       } else {
-        alert("Notification service is taking too long to load. Please check your internet connection and try again.");
+        alert("Notification service is taking too long to load.");
       }
     }
   </script>
