@@ -23,18 +23,16 @@
       });
     });
 
-    // Bridge function with a built-in retry if the SDK is still loading
-    function triggerPushPrompt(retries = 5) {
-      if (window.OneSignal && window.OneSignal.Slidedown) {
-        window.OneSignal.Slidedown.promptUser().catch(err => {
-          console.error("OneSignal Prompt Rejected:", err);
+    // Bridge function correctly hooked into OneSignalDeferred
+    function triggerPushPrompt() {
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          await OneSignal.Slidedown.promptUser();
+        } catch (err) {
+          console.error("OneSignal Prompt Error:", err);
           alert("Prompt failed: " + (err.message || err));
-        });
-      } else if (retries > 0) {
-        setTimeout(() => triggerPushPrompt(retries - 1), 300);
-      } else {
-        alert("Notification service is taking too long to load.");
-      }
+        }
+      });
     }
   </script>
   <style>
