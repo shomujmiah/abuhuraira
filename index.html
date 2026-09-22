@@ -23,11 +23,11 @@
       });
     });
 
-    // Bridge function correctly hooked into OneSignalDeferred
+    // Directly triggers the native permission prompt, bypassing slidedown session restrictions
     function triggerPushPrompt() {
       window.OneSignalDeferred.push(async function(OneSignal) {
         try {
-          await OneSignal.Slidedown.promptUser();
+          await OneSignal.Notifications.requestPermission();
         } catch (err) {
           console.error("OneSignal Prompt Error:", err);
           alert("Prompt failed: " + (err.message || err));
