@@ -21,13 +21,39 @@
         appId: "f7f7a2a5-6569-479c-b91d-48b29410590f",
         path: "/abuhuraira/"
       });
+
+      // Check initial permission state and hide button if already granted
+      checkNotificationPermission(OneSignal);
+
+      // Listen for permission changes dynamically
+      OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
+        if (permission) {
+          hideAlertButton();
+        }
+      });
     });
+
+    function checkNotificationPermission(OneSignal) {
+      if (OneSignal.Notifications.permission) {
+        hideAlertButton();
+      }
+    }
+
+    function hideAlertButton() {
+      const btn = document.getElementById('enableAlertsBtn');
+      if (btn) {
+        btn.style.display = 'none';
+      }
+    }
 
     // Directly triggers the native permission prompt, bypassing slidedown session restrictions
     function triggerPushPrompt() {
       window.OneSignalDeferred.push(async function(OneSignal) {
         try {
-          await OneSignal.Notifications.requestPermission();
+          const permission = await OneSignal.Notifications.requestPermission();
+          if (permission) {
+            hideAlertButton();
+          }
         } catch (err) {
           console.error("OneSignal Prompt Error:", err);
           alert("Prompt failed: " + (err.message || err));
@@ -44,13 +70,14 @@
       background: #9333ea; color: white; border: none; padding: 8px 14px;
       border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: opacity 0.3s ease;
     }
     iframe { width: 100%; height: 100%; border: none; display: block; }
   </style>
 </head>
 <body>
   <!-- Native button on the outer wrapper that bypasses iframe restrictions -->
-  <button class="floating-bell" onclick="triggerPushPrompt()">🔔 Enable Alerts</button>
+  <button id="enableAlertsBtn" class="floating-bell" onclick="triggerPushPrompt()">🔔 Enable Alerts</button>
 
   <iframe src="https://script.google.com/macros/s/AKfycbwXb38jVqF3J6sX3oR9nsv_NUVH3K4G_vky8cHWFVgppv0rpTn7KnQBLG9T8wRgfeIx/exec" allow="push"></iframe>
 </body>
