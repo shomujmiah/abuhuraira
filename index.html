@@ -33,6 +33,18 @@
       });
     });
 
+    // Function called from the iframe to update user tags in OneSignal
+    window.updateOneSignalTags = function(tagsObj) {
+        window.OneSignalDeferred.push(async function(OneSignal) {
+            try {
+                await OneSignal.User.addTags(tagsObj);
+                console.log("OneSignal Tags Updated Successfully:", tagsObj);
+            } catch (err) {
+                console.error("Failed to update OneSignal tags:", err);
+            }
+        });
+    };
+
     function checkNotificationPermission(OneSignal) {
       if (OneSignal.Notifications.permission) {
         hideAlertButton();
