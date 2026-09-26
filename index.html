@@ -31,14 +31,14 @@
       });
     });
 
-    // Listen for incoming messages from the Google Apps Script iframe
+    // Listen for incoming postMessages from the Google Apps Script iframe web app
     window.addEventListener('message', function(event) {
         if (event.data && event.data.type === 'UPDATE_ONESIGNAL_TAGS') {
             const tagsObj = event.data.tags;
             window.OneSignalDeferred.push(async function(OneSignal) {
                 try {
                     await OneSignal.User.addTags(tagsObj);
-                    console.log("OneSignal Tags Updated Successfully via postMessage:", tagsObj);
+                    console.log("OneSignal Tags Successfully Updated:", tagsObj);
                 } catch (err) {
                     console.error("Failed to update OneSignal tags:", err);
                 }
