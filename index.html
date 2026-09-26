@@ -22,10 +22,8 @@
         path: "/abuhuraira/"
       });
 
-      // Check initial permission state and hide button if already granted
       checkNotificationPermission(OneSignal);
 
-      // Listen for permission changes dynamically
       OneSignal.Notifications.addEventListener('permissionChange', function(permission) {
         if (permission) {
           hideAlertButton();
@@ -33,17 +31,20 @@
       });
     });
 
-    // Function called from the iframe to update user tags in OneSignal
-    window.updateOneSignalTags = function(tagsObj) {
-        window.OneSignalDeferred.push(async function(OneSignal) {
-            try {
-                await OneSignal.User.addTags(tagsObj);
-                console.log("OneSignal Tags Updated Successfully:", tagsObj);
-            } catch (err) {
-                console.error("Failed to update OneSignal tags:", err);
-            }
-        });
-    };
+    // Listen for incoming messages from the Google Apps Script iframe
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'UPDATE_ONESIGNAL_TAGS') {
+            const tagsObj = event.data.tags;
+            window.OneSignalDeferred.push(async function(OneSignal) {
+                try {
+                    await OneSignal.User.addTags(tagsObj);
+                    console.log("OneSignal Tags Updated Successfully via postMessage:", tagsObj);
+                } catch (err) {
+                    console.error("Failed to update OneSignal tags:", err);
+                }
+            });
+        }
+    });
 
     function checkNotificationPermission(OneSignal) {
       if (OneSignal.Notifications.permission) {
@@ -58,7 +59,6 @@
       }
     }
 
-    // Directly triggers the native permission prompt, bypassing slidedown session restrictions
     function triggerPushPrompt() {
       window.OneSignalDeferred.push(async function(OneSignal) {
         try {
